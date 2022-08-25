@@ -1,0 +1,23 @@
+import requests
+import telebot
+
+API_KEY = "5593972263:AAFCrM9-UU9Pb12-30blsEe0Gkw3eb33HX4"
+bot = telebot.TeleBot(API_KEY)
+
+@bot.message_handler(content_types=['text'])
+def get_massage(message):
+    try:
+        bot.send_message(message.chat.id, get_weather(message.text))
+        print(message.from_user)
+    except ValueError:
+        bot.send_message(message.chat.id, "Пошёл нахуй")
+
+def get_weather(city):
+    url = 'https://wttr.in/' + city + '?format=3'
+    if requests.get(url).status_code == 404:
+        raise ValueError
+    return requests.get(url).text
+
+
+
+bot.polling(none_stop=True)
